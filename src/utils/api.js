@@ -251,6 +251,7 @@ module.exports = {
     const client = this.getClient()
     const _path = this.getPath('stories')
 
+    console.log(params);
     return client.getAll(_path, params)
   },
 

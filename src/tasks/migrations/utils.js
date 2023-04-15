@@ -49,9 +49,17 @@ const getNameOfMigrationFile = (component, field) => {
 const getStoriesByComponent = async (api, componentName) => {
   try {
     const stories = await api.getStories({
-      contain_component: componentName
+      contain_component: componentName,
+      // starts_with: 'br',
+      // starts_with: 'la-es',
+      // starts_with: 'ru',
+      starts_with: 'kz-ru',
+      // starts_with: 'ja',
+      is_published: true
     })
+    console.log(stories.length)
 
+    // return stories.slice(0, 2);
     return stories
   } catch (e) {
     const error = parseError(e)
@@ -159,7 +167,8 @@ const showMigrationChanges = (path, value, oldValue) => {
   // It was created a new field
   if (oldValue === undefined) {
     // truncate the string with more than 30 characters
-    const _value = truncate(value)
+    // const _value = truncate(value)
+    const _value = value;
 
     console.log(`  ${chalk.green('-')} Created field "${chalk.green(path)}" with value "${chalk.green(_value)}"`)
     return
@@ -174,8 +183,10 @@ const showMigrationChanges = (path, value, oldValue) => {
   // It was updated the value
   if (value !== oldValue) {
     // truncate the string with more than 30 characters
-    const _value = truncate(value)
-    const _oldValue = truncate(oldValue)
+    // const _value = truncate(value)
+    // const _oldValue = truncate(oldValue)
+    const _value = value;
+    const _oldValue = oldValue
 
     console.log(`  ${chalk.blue('-')} Updated field "${chalk.blue(path)}" from "${chalk.blue(_oldValue)}" to "${chalk.blue(_value)}"`)
   }
