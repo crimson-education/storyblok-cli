@@ -5,11 +5,18 @@ module.exports = function (block, fullSlug) {
   // console.log(block);
   const category = block.categoryValue?.selectedOption;
 
-  const tag = getTagByCategory(category, fullSlug);
+  let tag = getTagByCategory(category, fullSlug);
+  if (!tag) {
+    console.warn(`  - ${chalk.bgYellow('warning---')} category: ${chalk.bgYellowBright(category)} Will try to parse from fullSlug:`)
+    const categoryFromPath = fullSlug.split('/')[2];
+    console.log(`  - ${chalk.bgGreenBright('success===')} ${chalk.bgYellow(categoryFromPath)}`);
+    tag = getTagByCategory(categoryFromPath, fullSlug)
+  }
   if (!tag) {
     console.error(`  - ${chalk.bgRed('error---')} category: ${chalk.bgRed(category)}, title: ${block.title}`)
     return;
   }
+
   console.log(`  - ${chalk.bgGreen('success===')} ${chalk.bgYellow(category)} -> ${chalk.bgYellow(tag)}`);
 
   const blogTags = [
@@ -47,8 +54,6 @@ const categoryToTagMap = {
   "college-student-insight":"college-student-insights",
   "tbd_a":"graduate-prep",
   "tbd_b":"junior-prep",
-  // FIXME: Try to guess the original category from the full slug?
-  // "all": "untagged-blogs",
 };
 
 const brMap = {
