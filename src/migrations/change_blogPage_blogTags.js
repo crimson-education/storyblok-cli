@@ -66,6 +66,7 @@ const brMap = {
   'college-in-the-uk': 'faculdade-no-reino-unido',
 }
 const ruMap = {
+  "admissions-news":"oб-университетах-и-поступлении-в-них",
   "admission-news":"oб-университетах-и-поступлении-в-них",
   "test-prep":"экзамены-и-тестирования",
   "essays-and-interviews":"эссе-и-интервью",
