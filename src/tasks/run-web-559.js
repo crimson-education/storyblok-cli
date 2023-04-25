@@ -23,16 +23,13 @@ const runWeb559 = async (api, options = {}) => {
   const component = 'blogPage'
 
   try {
-    console.log(
-      `${chalk.blue('-')} Getting stories for ${component} component`
-    )
+    console.log(`${chalk.blue('-')} Getting all top level folders`)
     const folderParams = {
       folder_only: true,
       with_parent: 0,
-      per_page: 5,
+      // per_page: 5,
       starts_with: 'la-es',
     }
-    // FIXME: folders
     const localeFolders = await getStoriesByParams(api, folderParams)
 
     if (isEmpty(localeFolders)) {
@@ -44,6 +41,7 @@ const runWeb559 = async (api, options = {}) => {
     }
     for (locale of localeFolders) {
       // get blog folder itself
+      console.log(`${chalk.blue('-')} Getting /blog folder for ${locale.full_slug}`)
       const blogFolderFullSlug = `${locale.full_slug}/blog`
       const blogFolderParams = { with_slug: blogFolderFullSlug };
       const blogFolder = (await getStoriesByParams(api, blogFolderParams))?.[0]
@@ -53,9 +51,10 @@ const runWeb559 = async (api, options = {}) => {
         continue
       }
 
-      console.log(`${chalk.bgGreen(`${blogFolder.full_slug}, ${blogFolder.id}, ${blogFolder.parent_id}`)}`)
+      // console.log(`${chalk.bgGreen(`${blogFolder.full_slug}, ${blogFolder.id}, ${blogFolder.parent_id}`)}`)
 
       // get logs for the current folder
+      console.log(`${chalk.blue('-')} Getting blogs for ${blogFolder.full_slug}`)
       const blogParams = {
         contain_component: 'blogPage',
         starts_with: blogFolder.full_slug,
@@ -70,10 +69,24 @@ const runWeb559 = async (api, options = {}) => {
         })
       }
       for (const blog of blogPages) {
-        if (blog.parent_id === blogFolder.id) {
-          console.log(chalk.bgYellow(`Blog ${blog.full_slug} already in blog root. Bypassed.`))
+        try {
+          if (blog.parent_id === blogFolder.id) {
+            console.log(chalk.bgYellow(`Blog ${blog.full_slug} already in blog root.`))
+            console.log(`${chalk.blue('-')} Bypassed!`)
+            console.log()
+            continue
+          }
+          console.log(chalk.bgGreen(`${blog.full_slug}, parent: ${blog.parent_id}`))
+
+          const url = `stories/${blog.id}`
+          const payload = { story: { parent_id: blogFolder.id } }
+          await api.put(url, payload)
+          console.log(`${chalk.blue('-')} Blog updated with success!`)
+        } catch (e) {
+          console.error(`${chalk.red('X')} An error occurred when migrating the blog: ${e.message}`)
         }
-        console.log(chalk.bgGreen(`${blog.full_slug}, parent: ${blog.parent_id}`))
+
+        console.log()
       }
     }
     return;
