@@ -1,8 +1,19 @@
 const chalk = require('chalk')
 
+const bypassPages = new Set([
+  'en/blog/campus-life-more/how-to-apply-to-us-universities',
+  'en/blog/campus-life-more/how-to-get-into-mit',
+  'en/blog/campus-life-more/uc-schools-ranked',
+])
+
 module.exports = function (block, fullSlug) {
   // console.log(fullSlug);
   // console.log(block);
+  if (bypassPages.has(fullSlug)) {
+    console.warn(`  - ${chalk.bgYellow('warning---')} bypassing: ${chalk.bgYellowBright(fullSlug)}, title: ${block.title}`)
+    return
+  }
+
   const category = block.categoryValue?.selectedOption;
 
   let tag = getTagByCategory(category, fullSlug);
@@ -45,6 +56,7 @@ const getTagByCategory = (category, fullSlug) => {
 };
 
 const categoryToTagMap = {
+  "admissions-news":"admissions-news",
   "admission-news":"admissions-news",
   "med-school":"med-school",
   "test-prep":"test-prep",
@@ -57,6 +69,7 @@ const categoryToTagMap = {
 };
 
 const brMap = {
+  // "admissions-news":"faculdades",
   "admission-news":"faculdades",
   "test-prep":"preparação-para-provas",
   "essays-and-interviews":"redações-e-entrevistas",

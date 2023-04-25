@@ -107,3 +107,5 @@ dist
 
 # IntelliJ
 .idea/
+
+src/migrations/rollback/

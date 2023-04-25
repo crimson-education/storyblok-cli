@@ -83,6 +83,12 @@ const runMigration = async (api, component, field, options = {}) => {
       })
     }
 
+    const bypassPages = new Set([
+      'en/blog/campus-life-more/how-to-apply-to-us-universities',
+      'en/blog/campus-life-more/how-to-get-into-mit',
+      'en/blog/campus-life-more/uc-schools-ranked',
+    ])
+
     for (const story of stories) {
       try {
         console.log(
@@ -96,7 +102,34 @@ const runMigration = async (api, component, field, options = {}) => {
         const isChangeContent = !isEqual(oldContent, storyData.content)
 
         // to prevent api unnecessary api executions
-        if (!options.isDryrun && isChangeContent) {
+        if (publish === 'only') {
+          if (bypassPages.has(story.full_slug) || !story.unpublished_changes) {
+            console.warn(`  - ${chalk.bgYellow('warning---')} bypassing: ${chalk.bgYellowBright(story.full_slug)}, title: ${storyData.content.title}`)
+            continue
+          }
+
+          console.log(
+            `${chalk.blue('-')} Publishing story ${story.full_slug} w/o updating contents`
+          )
+          const url = `stories/${story.id}/publish`
+
+          // create a rollback object
+          rollbackData.push({
+            id: storyData.id,
+            full_slug: storyData.full_slug,
+          })
+
+          // const payload = {
+          //   publish: '1',
+          //   force_update: '1'
+          // }
+          // await api.put(url, payload)
+
+          await api.get(url)
+          console.log(
+            `${chalk.blue('-')} Story published with success!`
+          )
+        } else if (!options.isDryrun && isChangeContent) {
           console.log(
             `${chalk.blue('-')} Updating story ${story.full_slug}`
           )

@@ -50,10 +50,12 @@ const getStoriesByComponent = async (api, componentName) => {
   try {
     const stories = await api.getStories({
       contain_component: componentName,
+      // starts_with: 'en/blog/campus-life-more/how-to',
+      // starts_with: 'en',
       // starts_with: 'br',
       // starts_with: 'la-es',
       // starts_with: 'ru',
-      starts_with: 'kz-ru',
+      // starts_with: 'kz-ru',
       // starts_with: 'ja',
       is_published: true
     })
