@@ -19,8 +19,11 @@ const getStoriesByParams = async (api, params = {}) => {
 }
 
 const runWeb559 = async (api, options = {}) => {
-  // const rollbackData = []
-  const component = 'blogPage'
+  const bypassPages = new Set([
+    'en/blog/campus-life-more/how-to-apply-to-us-universities',
+    'en/blog/campus-life-more/how-to-get-into-mit',
+    'en/blog/campus-life-more/uc-schools-ranked',
+  ])
 
   try {
     console.log(`${chalk.blue('-')} Getting all top level folders`)
@@ -28,7 +31,8 @@ const runWeb559 = async (api, options = {}) => {
       folder_only: true,
       with_parent: 0,
       // per_page: 5,
-      starts_with: 'la-es',
+      // starts_with: 'la-es',
+      // starts_with: 'en',
     }
     const localeFolders = await getStoriesByParams(api, folderParams)
 
@@ -76,10 +80,17 @@ const runWeb559 = async (api, options = {}) => {
             console.log()
             continue
           }
-          console.log(chalk.bgGreen(`${blog.full_slug}, parent: ${blog.parent_id}`))
+          // console.log(chalk.bgGreen(`${blog.full_slug}, parent: ${blog.parent_id}`))
+          console.log(`${chalk.blue('-')} Re-locating blog ${blog.full_slug}`)
 
           const url = `stories/${blog.id}`
           const payload = { story: { parent_id: blogFolder.id } }
+          if (bypassPages.has(blog.full_slug)) {
+            console.warn(`  - ${chalk.bgYellow('warning---')} Skip publishing: ${chalk.bgYellowBright(blog.full_slug)}`)
+          } else {
+            payload.publish = '1'
+          }
+
           await api.put(url, payload)
           console.log(`${chalk.blue('-')} Blog updated with success!`)
         } catch (e) {
@@ -89,62 +100,6 @@ const runWeb559 = async (api, options = {}) => {
         console.log()
       }
     }
-    return;
-
-    const stories = await getStoriesByParams(api, folderParams)
-    if (isEmpty(stories)) {
-      console.log(`${chalk.blue('-')} There are no stories for component ${component}!`)
-      return Promise.resolve({
-        executed: false,
-        motive: 'NO_STORIES'
-      })
-    }
-    for (const story of stories) {
-      try {
-        console.log(
-          `${chalk.blue('-')} Processing story ${story.full_slug}`
-        )
-        // const storyData = await api.getSingleStory(story.id)
-        // const oldContent = cloneDeep(storyData.content)
-        // const isChangeContent = !isEqual(oldContent, storyData.content)
-        const isChangeContent = true;
-
-        // to prevent api unnecessary api executions
-        if (!options.isDryrun && isChangeContent) {
-          console.log(
-            `${chalk.blue('-')} Updating story ${story.full_slug}`
-          )
-          const url = `stories/${story.id}`
-
-          // create a rollback object
-          // rollbackData.push({
-          //   id: storyData.id,
-          //   full_slug: storyData.full_slug,
-          //   content: oldContent
-          // })
-
-          const payload = {
-            // story: storyData,
-            // force_update: '1'
-          }
-
-          console.log(`${story.full_slug}, ${story.id}, ${story.parent_id}`)
-          // await api.put(url, payload)
-          console.log(
-            `${chalk.blue('-')} Story updated with success!`
-          )
-        }
-      } catch (e) {
-        console.error(`${chalk.red('X')} An error occurred when migrating the story: ${e.message}`)
-      }
-
-      console.log()
-    }
-
-    // send file of rollback to save in migrations/rollback directory
-    // if (!isEmpty(rollbackData)) {
-    //   await createRollbackFile(rollbackData, component, field)
-    // }
 
     console.log(`${chalk.green('✓')} The blogs were migrated with success!`)
     return Promise.resolve({
