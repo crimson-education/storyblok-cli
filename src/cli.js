@@ -373,7 +373,7 @@ program
   .requiredOption('-c, --component <COMPONENT_NAME>', 'Name of the component')
   .requiredOption('-f, --field <FIELD_NAME>', 'Name of the component field')
   .option('--dryrun', 'Do not update the story content')
-  .option('--publish <PUBLISH_OPTION>', 'Publish the content. It can be: only, all, published or published-with-changes')
+  .option('--publish <PUBLISH_OPTION>', 'Publish the content. It can be: all, published or published-with-changes')
   .option('--publish-languages <LANGUAGES>', 'Publish specific languages')
   .action(async (options) => {
     const field = options.field || ''
@@ -389,13 +389,12 @@ program
     }
 
     const publishOptionsAvailable = [
-      // 'only',
       'all',
       'published',
       'published-with-changes'
     ]
     if (publish && !publishOptionsAvailable.includes(publish)) {
-      console.log(chalk.red('X') + ' Please provide a correct publish option: only, all, published, or published-with-changes')
+      console.log(chalk.red('X') + ' Please provide a correct publish option: all, published, or published-with-changes')
       process.exit(1)
     }
 
