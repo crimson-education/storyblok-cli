@@ -13,6 +13,8 @@ const SYNC_TYPES = [
 ]
 
 const COMMANDS = {
+  WEB_559: 'web-559-migrate-blogs',
+  //
   GENERATE_MIGRATION: 'generate-migration',
   IMPORT: 'import',
   LOGIN: 'login',
@@ -25,7 +27,7 @@ const COMMANDS = {
   SCAFFOLD: 'scaffold',
   SELECT: 'select',
   SPACES: 'spaces',
-  SYNC: 'sync'
+  SYNC: 'sync',
 }
 
 module.exports = {

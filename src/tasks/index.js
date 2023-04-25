@@ -1,4 +1,6 @@
 module.exports = {
+  runWeb559: require('./run-web-559'),
+  //
   sync: require('./sync'),
   scaffold: require('./scaffold'),
   quickstart: require('./quickstart'),

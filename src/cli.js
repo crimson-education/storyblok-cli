@@ -368,6 +368,35 @@ program
   })
 
 program
+  .command(COMMANDS.WEB_559)
+  .description('WEB-559: Migrate blogs from category folders into blog root folder')
+  // .option('--dryrun', 'Do not update the story content')
+  .action(async (options) => {
+    console.log(`${chalk.blue('-')} Migrating blogs\n`)
+
+    const space = program.space
+    if (!space) {
+      console.log(chalk.red('X') + ' Please provide the space as argument --space YOUR_SPACE_ID.')
+      process.exit(1)
+    }
+
+    try {
+      if (!api.isAuthorized()) {
+        await api.processLogin()
+      }
+
+      api.setSpaceId(space)
+      await tasks.runWeb559(
+        api,
+      )
+    } catch (e) {
+      console.log(chalk.red('X') + ' (CLI) An error ocurred when migrating blogs : ' + e.message)
+      process.exit(1)
+    }
+  });
+
+
+program
   .command(COMMANDS.RUN_MIGRATION)
   .description('Run a migration file')
   .requiredOption('-c, --component <COMPONENT_NAME>', 'Name of the component')
