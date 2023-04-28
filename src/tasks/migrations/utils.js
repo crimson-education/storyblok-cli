@@ -57,6 +57,7 @@ const getStoriesByComponent = async (api, componentName) => {
       // starts_with: 'ru',
       // starts_with: 'kz-ru',
       // starts_with: 'ja',
+      starts_with: 'nz',
       is_published: true
     })
     console.log(stories.length)
@@ -187,11 +188,18 @@ const showMigrationChanges = (path, value, oldValue) => {
     // truncate the string with more than 30 characters
     // const _value = truncate(value)
     // const _oldValue = truncate(oldValue)
+
     const _value = value;
     const _oldValue = oldValue
 
+    // const _value = stringifyAndPrettify(value);
+    // const _oldValue = stringifyAndPrettify(oldValue)
+
     console.log(`  ${chalk.blue('-')} Updated field "${chalk.blue(path)}" from "${chalk.blue(_oldValue)}" to "${chalk.blue(_value)}"`)
   }
+}
+const stringifyAndPrettify = (obj) => {
+  return JSON.stringify(obj, null, 2)
 }
 
 /**
