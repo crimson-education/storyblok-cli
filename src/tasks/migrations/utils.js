@@ -57,7 +57,9 @@ const getStoriesByComponent = async (api, componentName) => {
       // starts_with: 'ru',
       // starts_with: 'kz-ru',
       // starts_with: 'ja',
-      starts_with: 'nz',
+
+      // starts_with: 'nz',
+      // starts_with: 'au',
       is_published: true
     })
     console.log(stories.length)
@@ -186,11 +188,11 @@ const showMigrationChanges = (path, value, oldValue) => {
   // It was updated the value
   if (value !== oldValue) {
     // truncate the string with more than 30 characters
-    // const _value = truncate(value)
-    // const _oldValue = truncate(oldValue)
+    const _value = truncate(value)
+    const _oldValue = truncate(oldValue)
 
-    const _value = value;
-    const _oldValue = oldValue
+    // const _value = value;
+    // const _oldValue = oldValue
 
     // const _value = stringifyAndPrettify(value);
     // const _oldValue = stringifyAndPrettify(oldValue)
