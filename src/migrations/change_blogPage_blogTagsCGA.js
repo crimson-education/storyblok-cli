@@ -1,4 +1,4 @@
-const chalk = require('chalk')
+const { bgYellow, bgGreen } = require('../utils/util')
 
 module.exports = function (block, fullSlug) {
   const localeLessSlug = fullSlug.substring(fullSlug.indexOf('/') + 1);
@@ -72,11 +72,3 @@ const nzTagsMap = { "blog/crimson-code": ["subject-guides", "technology"], "blog
 //   "community": "Community",
 //   "leadership": "Leadership"
 // }
-
-const bgYellow = (msg) => {
-  console.warn(`  - ${chalk.bgYellow(`warning--- ${msg}`)}`)
-}
-
-const bgGreen = (msg) => {
-  console.log(`  - ${chalk.bgGreen(`info--- ${msg}`)}`)
-}

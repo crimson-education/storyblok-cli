@@ -54,7 +54,7 @@ const getStoriesByComponent = async (api, componentName) => {
       // starts_with: 'en/blog/head-of-greenwich',
       // starts_with: 'en/blog/what-is-chatgpt',
       // starts_with: 'en/blog/head-of-aoraki',
-      // starts_with: 'en',
+      starts_with: 'en/resources/blog',
       // starts_with: 'br',
       // starts_with: 'la-es',
       // starts_with: 'ru',
