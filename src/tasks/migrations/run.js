@@ -95,6 +95,14 @@ const runMigration = async (api, component, field, options = {}) => {
 
         const isChangeContent = !isEqual(oldContent, storyData.content)
 
+        if (isChangeContent) {
+          console.log(
+            `${chalk.bgBlue(`- published: ${isStoryPublishedWithoutChanges(storyData)}`)}`
+          )
+          console.log(
+            `${chalk.bgBlue(`- published-with-changes: ${isStoryWithUnpublishedChanges(story)}`)}`
+          )
+        }
         // to prevent api unnecessary api executions
         if (!options.isDryrun && isChangeContent) {
           console.log(
