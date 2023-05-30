@@ -17,14 +17,51 @@ const getStoriesByParams = async (api, params = {}) => {
     return Promise.reject(error.error)
   }
 }
+const doneLocales = [
+  'en',
+  'ge',
+  'ph-en',
+  'varun-test',
+  'la-es',
+  'la-en',
+  'az-az',
+  'az-ru',
+  'page-templates',
+  'global-education-summit-sydney-22',
+  'crimson-careers',
+  'mx',
+  'id',
+  'id-en',
+  'ca-zh',
+  'hk-zh',
+  'kr-en',
+  'kz-en',
+  'tr-en',
+  'ru-en',
+  'in',
+  'hk-en',
+  'mm-en',
+  'kh-en',
+  'th-en',
+  'tw-en',
+  'us-zh',
+  'ae',
+  'jp-en',
+  'ja',
+  'tr',
+  'th',
+  'vn-en',
+  'vn',
+  'ae-en',
+  'us',
+  'uk',
+  'tw',
+  'kr',
+  'br',
+  'ca'
+]
 
 const runWeb559 = async (api, options = {}) => {
-  const bypassPages = new Set([
-    'en/blog/campus-life-more/how-to-apply-to-us-universities',
-    'en/blog/campus-life-more/how-to-get-into-mit',
-    'en/blog/campus-life-more/uc-schools-ranked',
-  ])
-
   try {
     console.log(`${chalk.blue('-')} Getting all top level folders`)
     const folderParams = {
@@ -32,7 +69,8 @@ const runWeb559 = async (api, options = {}) => {
       with_parent: 0,
       // per_page: 5,
       // starts_with: 'la-es',
-      // starts_with: 'en',
+      // starts_with: 'ca',
+      starts_with: 'br',
     }
     const localeFolders = await getStoriesByParams(api, folderParams)
 
@@ -43,7 +81,14 @@ const runWeb559 = async (api, options = {}) => {
         motive: 'NO_FOLDERS'
       })
     }
-    for (locale of localeFolders) {
+    console.log(`===${localeFolders.length}`)
+    for (const locale of localeFolders) {
+      console.log(`====${locale.full_slug}`)
+      // if (doneLocales.includes(locale.full_slug)) {
+      //   console.log(`${chalk.bgYellow(`Locale ${locale.full_slug} has been processed. Moving to the next one`)} `)
+      //   continue
+      // }
+
       // get blog folder itself
       console.log(`${chalk.blue('-')} Getting /blog folder for ${locale.full_slug}`)
       const blogFolderFullSlug = `${locale.full_slug}/blog`
@@ -67,10 +112,11 @@ const runWeb559 = async (api, options = {}) => {
       const blogPages = await getStoriesByParams(api, blogParams)
       if (isEmpty(blogPages)) {
         console.log(`${chalk.blue('-')} There are no blogs for ${blogFolder.full_slug}!`)
-        return Promise.resolve({
-            executed: false,
-            motive: 'NO_STORIES'
-        })
+        continue
+        // return Promise.resolve({
+        //   executed: false,
+        //   motive: 'NO_STORIES'
+        // })
       }
       for (const blog of blogPages) {
         try {
@@ -85,13 +131,17 @@ const runWeb559 = async (api, options = {}) => {
 
           const url = `stories/${blog.id}`
           const payload = { story: { parent_id: blogFolder.id } }
-          if (bypassPages.has(blog.full_slug)) {
-            console.warn(`  - ${chalk.bgYellow('warning---')} Skip publishing: ${chalk.bgYellowBright(blog.full_slug)}`)
+          if (blog.unpublished_changes) {
+            console.log(chalk.bgYellow(`Blog ${blog.full_slug} has unpublished changes. Won't publish it.`))
           } else {
+            // if (bypassPages.has(blog.full_slug)) {
+            //   console.warn(`  - ${chalk.bgYellow('warning---')} Skip publishing: ${chalk.bgYellowBright(blog.full_slug)}`)
+            // } else {
             payload.publish = '1'
           }
 
           await api.put(url, payload)
+
           console.log(`${chalk.blue('-')} Blog updated with success!`)
         } catch (e) {
           console.error(`${chalk.red('X')} An error occurred when migrating the blog: ${e.message}`)
